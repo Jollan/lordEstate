@@ -1,0 +1,11 @@
+.results {
+  .page.right.placeholder {
+    .content {
+      overflow: hidden;
+      display: flex;
+      .ui.fluid.placeholder {
+        width: 100%;
+      }
+    }
+  }
+}

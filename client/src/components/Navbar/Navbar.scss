@@ -1,0 +1,111 @@
+@use "../../partials/const" as _;
+@import "../../partials/responsive";
+
+.ui.dimmer.navbar {
+  z-index: 1000;
+}
+
+nav {
+  &,
+  .nav.left,
+  .logo,
+  .nav.right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .topbar {
+    flex: 1;
+    height: _.$topbar-height;
+    display: flex;
+    li {
+      list-style-type: none;
+    }
+    .left {
+      flex: 3;
+      gap: 30px;
+      font-weight: bold;
+      img {
+        width: 30px;
+        height: 30px;
+      }
+      span {
+        font-size: 1.5rem;
+      }
+      li a.active {
+        color: dodgerblue;
+      }
+    }
+    .right {
+      flex: 2;
+      background-color: _.$right-side-color;
+      .wrapper {
+        width: 100%;
+        padding-right: 10px;
+        display: flex;
+        justify-content: end;
+        gap: 10px;
+        .ui.button {
+          &:not(.secondary) {
+            color: black;
+          }
+          &.hidden {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+  i.icon.chevron {
+    translate: 10px 0;
+    transition: all 200ms;
+    &.collapse {
+      rotate: 180deg;
+      translate: 0;
+    }
+  }
+  #sm-md-block {
+    display: none;
+    &.hidden {
+      display: none;
+    }
+  }
+
+  .ui.overlay.sidebar {
+    z-index: 1001;
+  }
+
+  @include md {
+    span {
+      display: none;
+    }
+    #sm-md-block.icon.chevron {
+      position: fixed;
+      right: 0;
+      top: 50%;
+    }
+  }
+  @include sm {
+    .nav.right,
+    li:not(.logo) {
+      display: none;
+    }
+    span,
+    #sm-md-block:not(.icon.chevron, .hidden) {
+      display: flex;
+    }
+  }
+
+  @include md {
+    &.responsivity {
+      #sm-md-block.icon.chevron {
+        display: flex;
+      }
+    }
+  }
+  @include sm {
+    #sm-md-block.icon.chevron {
+      position: static;
+    }
+  }
+}

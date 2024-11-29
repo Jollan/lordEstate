@@ -1,0 +1,90 @@
+@use "../../partials/const" as _;
+@import "../../partials/responsive";
+
+.post {
+  .page.left {
+    .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      display: flex;
+      flex-direction: column;
+      padding-right: 10px;
+      padding-bottom: 10px;
+      .description.field {
+        height: 250px;
+        .quill {
+          height: 75%;
+        }
+      }
+    }
+  }
+  .page.right {
+    > .content {
+      overflow: hidden;
+      padding: 0 5px 10px;
+      display: flex;
+      flex-direction: column;
+      $gap: 10px;
+      gap: $gap;
+      .label {
+        align-self: center;
+        font-size: x-large;
+        opacity: 0.6;
+      }
+      $btnHeight: 46.28px;
+      .images {
+        max-height: calc(
+          100vh - _.$topbar-height - ($gap * 2 + $btnHeight + 10px + 20px)
+        );
+        overflow-y: scroll;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+        .grid {
+          padding: 15px;
+          .column {
+            padding: 3px;
+            max-height: 200px;
+            display: flex;
+            .reveal {
+              .visible.content {
+                height: 100%;
+                .image {
+                  width: 100%;
+                  height: 100%;
+                  object-fit: cover;
+                }
+              }
+              .hidden.content {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #fff;
+              }
+            }
+          }
+        }
+      }
+      .upload-widget-container {
+        height: $btnHeight;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  @include md {
+    .page.left {
+      .content {
+        .description.field {
+          .quill {
+            height: 65%;
+          }
+        }
+      }
+    }
+  }
+}

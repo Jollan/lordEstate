@@ -1,0 +1,54 @@
+@import "../../partials/responsive";
+@import "../../partials/mixin";
+
+.home {
+  .page.left {
+    padding-right: 100px;
+    padding-left: 1px;
+    height: 100%;
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .content {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      .header {
+        font-size: xx-large;
+      }
+    }
+  }
+  .page.right {
+    overflow: visible;
+    .content {
+      height: 100%;
+      @include PageRightBgImage;
+    }
+  }
+
+  @include md {
+    .page.left {
+      padding-right: 10px;
+      .content {
+        .ui.three.statistics {
+          justify-content: center;
+          gap: 10px;
+        }
+      }
+    }
+    .page.right {
+      .content {
+        img:not(.ui.image) {
+          width: 100%;
+        }
+      }
+    }
+  }
+  @include sm {
+    grid-template-columns: 1fr;
+    .page.right {
+      display: none;
+    }
+  }
+}

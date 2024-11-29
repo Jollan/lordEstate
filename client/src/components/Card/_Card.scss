@@ -1,0 +1,22 @@
+@import "../../partials/responsive";
+
+@mixin Card {
+  .item {
+    .image {
+      display: flex;
+      .image-loader {
+        display: flex;
+      }
+    }
+
+    @include sm {
+      .content {
+        .extra {
+          #not-trash-sm {
+            display: none;
+          }
+        }
+      }
+    }
+  }
+}

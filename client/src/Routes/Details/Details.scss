@@ -1,0 +1,152 @@
+@use "../../partials/const" as _;
+@import "../../partials/responsive";
+
+.details {
+  .page.left {
+    > .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      display: flex;
+      flex-direction: column;
+      padding-right: 10px;
+      padding-bottom: 10px;
+      gap: 30px;
+
+      .info {
+        display: flex;
+        .text-content {
+          flex: 3;
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          .title {
+            font-size: large;
+            font-weight: bold;
+          }
+        }
+        .avatar-wrapper {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          background-color: goldenrod;
+          color: black;
+          border-radius: 5px;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+  .page.right {
+    > .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding: 0 10px 10px;
+
+      .section {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .label {
+          font-size: larger;
+          font-weight: bold;
+        }
+        .ui.list,
+        .specific {
+          background-color: #fff;
+          padding: 5px;
+          border-radius: 5px;
+          display: flex;
+        }
+        img.icon {
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .general {
+        .ui.list:not(.horizontal) {
+          flex-direction: column;
+          .item {
+            display: flex;
+            gap: 5px;
+          }
+        }
+      }
+      .room-sizes {
+        .specifics {
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+          > * {
+            align-items: center;
+            gap: 5px;
+          }
+        }
+      }
+      .nearby-places {
+        .ui.list.horizontal {
+          justify-content: space-between;
+          gap: 10px;
+        }
+      }
+      .location {
+        .map-container {
+          height: 500px;
+        }
+      }
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        .ui.button {
+          color: black !important;
+          font-weight: bold;
+        }
+        .buttons .active .visible.menu.transition {
+          z-index: 900;
+          .item {
+            z-index: 900;
+          }
+        }
+      }
+    }
+  }
+
+  @include md {
+    .page.right {
+      .content {
+        .section {
+          .ui.list,
+          .specific {
+            background-color: _.$right-side-color;
+          }
+        }
+      }
+    }
+  }
+
+  @include sm {
+    .page.right {
+      .content {
+        .section {
+          .ui.list,
+          .specific {
+            background-color: _.$right-side-color;
+          }
+        }
+      }
+    }
+  }
+}

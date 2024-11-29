@@ -1,0 +1,24 @@
+.update {
+  .page.left {
+    overflow: hidden;
+    .content {
+      height: 100%;
+      text-align: center;
+      align-content: center;
+      padding-bottom: 10px;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .ui.segment {
+        width: 350px;
+        margin: auto;
+      }
+    }
+  }
+  .page.right {
+    > .content {
+      height: 100%;
+    }
+  }
+}

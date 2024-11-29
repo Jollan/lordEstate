@@ -1,0 +1,30 @@
+@import "../../../../partials/responsive";
+
+.chat-message {
+  align-self: flex-start;
+  padding: 5px;
+  &.mine {
+    align-self: flex-end;
+  }
+  max-width: 50%;
+  .text {
+    overflow-wrap: break-word;
+  }
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
+    .ui.time.label {
+      background-color: #f7c14b85 !important;
+      color: black !important;
+      padding: 0;
+    }
+    .indicator {
+      line-height: 0;
+    }
+  }
+  @include sm {
+    max-width: 90%;
+  }
+}

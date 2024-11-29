@@ -1,0 +1,25 @@
+.search {
+  .buttons {
+    .button {
+      border-radius: 0 !important;
+    }
+    .button:first-of-type {
+      border-top-left-radius: 5px !important;
+    }
+    .button:last-of-type {
+      border-top-right-radius: 5px !important;
+    }
+    input:checked + .button {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+  }
+  .action.input :where(input, .dropdown) {
+    border-radius: 0;
+  }
+  .action {
+    .ui.form.field {
+      width: calc(100% / 3);
+    }
+  }
+}

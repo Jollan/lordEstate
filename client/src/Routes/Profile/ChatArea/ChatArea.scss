@@ -1,0 +1,73 @@
+@use "../../../partials/const" as _;
+@import "../../../partials/responsive";
+@import "../../../partials/mixin";
+
+.ctn {
+  height: 100%;
+  .chat-area {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    > * {
+      padding: 5px;
+    }
+    .head {
+      background-color: #f7c14b85;
+      display: flex;
+      align-items: center;
+      .user {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+    }
+    .middle {
+      flex: 1;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .messages {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        
+      }
+    }
+    .foot {
+      .ui.form {
+        display: flex;
+        align-items: start;
+        gap: 5px;
+        .input {
+          flex: 1;
+          textarea {
+            resize: none;
+          }
+        }
+        .emoji {
+          position: relative;
+          margin-left: 0.25em;
+          .smile.icon {
+            & + div > * {
+              position: absolute;
+              bottom: 30px;
+              right: 0;
+              @include sm {
+                @include EmojiCentered;
+              }
+              @include smL {
+                @include EmojiCentered;
+              }
+            }
+          }
+        }
+        .ui.button {
+          color: black;
+        }
+      }
+    }
+  }
+}

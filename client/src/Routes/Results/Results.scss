@@ -1,0 +1,25 @@
+.results {
+  .page.left {
+    > .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      padding-right: 10px;
+      padding-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      .pagination {
+        display: flex;
+        justify-content: center;
+      }
+    }
+  }
+  .page.right {
+    .content {
+      height: 100%;
+    }
+  }
+}

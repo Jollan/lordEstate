@@ -1,0 +1,22 @@
+@mixin Chat {
+  .item {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    .content {
+      width: 90% !important;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &.unread {
+      background-color: #f7c14b85;
+    }
+    &.active {
+      background-color: #c0c1c2;
+    }
+  }
+}

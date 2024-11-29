@@ -1,0 +1,61 @@
+@import "../../partials/responsive";
+@import "../../partials/mixin";
+
+.login {
+  .page.left {
+    > .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      .ui.grid {
+        height: 100%;
+        .column {
+          max-width: 450px;
+          margin: auto;
+          b {
+            cursor: pointer;
+            color: cornflowerblue;
+            margin-left: 5px;
+          }
+        }
+      }
+    }
+  }
+  .page.right {
+    overflow: visible;
+    > .content {
+      height: 100%;
+      overflow-y: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      @include PageRightBgImage;
+    }
+  }
+
+  &:not(:has(.dimmable)) {
+    @include md {
+      .page.left {
+        padding-right: 10px;
+      }
+      .page.right {
+        .content {
+          img:not(.ui.image) {
+            width: 100%;
+          }
+        }
+      }
+    }
+    @include sm {
+      grid-template-columns: 1fr;
+      .page.left {
+        padding-right: 0;
+      }
+      .page.right {
+        display: none;
+      }
+    }
+  }
+}
