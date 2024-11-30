@@ -5,7 +5,7 @@ import { useSessionExpiredModal } from "../../../lib/hooks";
 const RouteErrorPage = () => {
   const error: any = useRouteError();
 
-  useSessionExpiredModal()(error)
+  useSessionExpiredModal()(error);
 
   const errorMessage =
     error?.response?.data?.message ||
@@ -45,12 +45,19 @@ const RouteErrorPage = () => {
         <p style={{ marginTop: "1.5rem", fontSize: "1rem", color: "grey" }}>
           If this issue persists, please contact our support team.
         </p>
-        <div style={{ marginTop: "2rem", display: "flex" }}>
-          <Button color="blue" onClick={handleRefresh}>
-            <Icon name="refresh" /> Refresh Page
-          </Button>
+        <div
+          style={{
+            marginTop: "2rem",
+            display: "flex",
+            flexDirection: "column",
+            gap: 10,
+          }}
+        >
           <Button color="green" onClick={handleGoHome}>
             <Icon name="home" /> Go to Home
+          </Button>
+          <Button color="blue" onClick={handleRefresh}>
+            <Icon name="refresh" /> Refresh Page
           </Button>
         </div>
       </Segment>

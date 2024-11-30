@@ -10,7 +10,7 @@ import {
 import "./Navbar.scss";
 import { ReactNode, useContext, useEffect, useState } from "react";
 import Avatar from "../Avatar/Avatar";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { rctClass, title } from "../../lib/utils";
 import { NavbarContext } from "../../context/Navbar.context";
 import { AuthContext } from "../../context/Auth.context";
@@ -39,7 +39,6 @@ const Navbar = ({ children }: NavbarProps) => {
 
   const fetch = useNotificationStore((state) => state.fetch);
   const count = useNotificationStore((state) => state.count);
-  const navigate = useNavigate();
   const modal = useSessionExpiredModal();
 
   useEffect(() => {
@@ -77,16 +76,12 @@ const Navbar = ({ children }: NavbarProps) => {
     setLoading(true);
     try {
       await logout();
-      updateCurrentUser(null);
-
       socket?.disconnect();
-      navigate("/");
-
+      updateCurrentUser(null);
       toast.success("Logout successful.");
+      window.location.href = "/";
     } catch (error: any) {
       toast.error(error.response.data.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -197,7 +192,13 @@ const Navbar = ({ children }: NavbarProps) => {
             onClick={() => setSidebarActive(true)}
           />
           {!!count && (
-            <Label color="red" size="tiny" floating circular style={{ left: "90%" }}>
+            <Label
+              color="red"
+              size="tiny"
+              floating
+              circular
+              style={{ left: "90%" }}
+            >
               {count}
             </Label>
           )}

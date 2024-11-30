@@ -68,12 +68,19 @@ export class ErrorBoundary extends Component<
             <p style={{ marginTop: "1.5rem", fontSize: "1rem", color: "grey" }}>
               You can try reloading the page or go back to the homepage.
             </p>
-            <div style={{ marginTop: "2rem", display: 'flex' }}>
-              <Button color="blue" onClick={this.handleReload}>
-                <Icon name="refresh" /> Reload Page
-              </Button>
+            <div
+              style={{
+                marginTop: "2rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+              }}
+            >
               <Button color="green" onClick={this.handleGoHome}>
                 <Icon name="home" /> Go to Homepage
+              </Button>
+              <Button color="blue" onClick={this.handleReload}>
+                <Icon name="refresh" /> Reload Page
               </Button>
             </div>
           </Segment>

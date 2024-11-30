@@ -3,6 +3,7 @@ import { LoaderContext } from "../context/Loader.context";
 import { savePost } from "../services/user";
 import toast from "react-hot-toast";
 import { SessionExpiredModalContext } from "../context/Modal.context";
+import { AuthContext } from "../context/Auth.context";
 
 export const useSavePost = (callback: () => void) => {
   const { setLoading } = useContext(LoaderContext);
@@ -25,9 +26,10 @@ export const useSavePost = (callback: () => void) => {
 
 export const useSessionExpiredModal = () => {
   const { setIsSessionExpired } = useContext(SessionExpiredModalContext);
+  const { currentUser } = useContext(AuthContext);
 
   return (error: any) => {
-    if (error?.response?.status === 401) {
+    if (error?.response?.status === 401 && currentUser) {
       setIsSessionExpired(true);
     }
   };

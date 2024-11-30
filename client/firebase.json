@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "lordstate",
+    "site": "lordestate",
     "public": "./dist",
     "ignore": [
       "firebase.json",
