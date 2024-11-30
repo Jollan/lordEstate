@@ -72,6 +72,13 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.login = login;
 const logout = (req, res) => {
-    res.clearCookie("token").status(204).end();
+    res
+        .clearCookie("token", {
+        httpOnly: true,
+        secure: const_1.isProdEnv,
+        sameSite: const_1.isProdEnv ? "none" : "lax",
+    })
+        .status(204)
+        .end();
 };
 exports.logout = logout;

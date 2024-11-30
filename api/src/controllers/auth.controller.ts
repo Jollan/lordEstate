@@ -65,5 +65,12 @@ export const login: AsyncRequestHandler = async (req, res) => {
 };
 
 export const logout: e.RequestHandler = (req, res) => {
-  res.clearCookie("token").status(204).end();
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      secure: isProdEnv,
+      sameSite: isProdEnv ? "none" : "lax",
+    })
+    .status(204)
+    .end();
 };
