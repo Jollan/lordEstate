@@ -1,21 +1,19 @@
-import { Button, Form, Icon, TextArea } from "semantic-ui-react";
+import { Button, Form, Icon } from "semantic-ui-react";
 import Avatar from "../../../components/Avatar/Avatar";
 import "./ChatArea.scss";
 import { useContext, useEffect, useRef, useState } from "react";
 import Picker from "@emoji-mart/react";
-import { Chat, Message as IMessage } from "../../../models/chat.model";
+import { Message as IMessage } from "../../../models/chat.model";
 import { title } from "../../../lib/utils";
 import { AuthContext } from "../../../context/Auth.context";
 import { createMessage, getChat, readChat } from "../../../services/chat";
 import { SocketContext } from "../../../context/Socket.context";
 import { without } from "lodash-es";
-import { ChatContext } from "../../../context/Chat.context";
-import { useNotificationStore } from "../../../store/notification.store";
-import toast from "react-hot-toast";
 import Message from "./Message/Message";
 import { LoaderContext } from "../../../context/Loader.context";
 import { ChatMeta } from "../Profile";
-import { useSessionExpiredModal } from "../../../lib/hooks";
+import { useErrorToast } from "../../../lib/hooks";
+import useChatStore from "../../../store/chat.store";
 
 interface ChatAreaProps {
   chatMeta: ChatMeta;
@@ -25,15 +23,17 @@ interface ChatAreaProps {
 const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
   const [openEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [text, setText] = useState("");
+
+  const messageEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   const { currentUser } = useContext(AuthContext);
   const { setLoading } = useContext(LoaderContext);
   const { socket } = useContext(SocketContext);
-  const [currentChat, setCurrentChat] = useState<Chat>(null!);
 
-  const { setChats } = useContext(ChatContext);
-  const messageEndRef = useRef<HTMLDivElement>(null);
-  const fetch = useNotificationStore((state) => state.fetch);
-  const modal = useSessionExpiredModal();
+  const { currentChat, setCurrentChat, setChatList } = useChatStore();
+
+  const errorToast = useErrorToast();
 
   useEffect(() => {
     if (chatMeta) {
@@ -43,9 +43,8 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
           const { data } = await getChat(chatMeta.chatId);
           setCurrentChat(data);
         } catch (error) {
-          modal(error);
+          errorToast(error, "For some reason the chat could not be opened.");
           closeChat();
-          toast.error("For some reason the chat could not be opened.");
         } finally {
           setLoading(false);
         }
@@ -55,57 +54,53 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
 
   useEffect(() => {
     if (currentChat) {
+      inputRef.current?.focus();
       messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [currentChat?.messages!.length]);
 
   useEffect(() => {
     if (socket) {
-      socket.on("messageReceived", (data: IMessage) => {
+      const listener = (data: IMessage) => {
         const seenBy: string[] = [];
         if (chatMeta?.chatId === data.chatId) {
-          seenBy.push(currentUser!.id);
+          seenBy.push(currentUser!.id!);
           setCurrentChat((chat) => {
             return {
-              ...chat,
-              messages: [...chat.messages!, data],
+              ...chat!,
+              messages: [...chat!.messages!, data],
             };
           });
           (async function () {
             try {
               await readChat(chatMeta.chatId);
             } catch (error: any) {
-              modal(error);
-              // toast.error("Something went wrong.");
+              errorToast(error);
             }
           })();
-        } else {
-          fetch(() => {
-            toast.error("Failed to fetch unread notifications count.");
-          });
         }
-
-        setChats((chats) => {
+        setChatList((chats) => {
           const index = chats.findIndex((chat) => chat.id === data.chatId);
           return [
             { ...data.chat!, seenBy, lastMessage: data.text },
             ...(index !== -1 ? without(chats, chats[index]) : chats),
           ];
         });
-      });
+      };
+      socket.on("messageReceived", listener);
 
       socket.on("messageRead", (data: IMessage) => {
         if (chatMeta?.chatId === data.chatId) {
           setCurrentChat((chat) => {
-            const index = chat.messages!.findIndex((m) => m.id === data.id);
-            chat.messages![index] = data;
-            return { ...chat };
+            const index = chat!.messages!.findIndex((m) => m.id === data.id);
+            chat!.messages![index] = data;
+            return { ...chat! };
           });
         }
       });
 
       return () => {
-        socket.off("messageReceived").off("messageRead");
+        socket.off("messageReceived", listener).off("messageRead");
       };
     }
   }, [socket, chatMeta]);
@@ -121,8 +116,6 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
   const handleSend = async () => {
     setOpenEmojiPicker(false);
 
-    if (!text.trim()) return;
-
     const createdAt = new Date().toString();
     try {
       const message = {
@@ -133,11 +126,11 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
 
       setCurrentChat((chat) => {
         return {
-          ...chat,
-          messages: [...chat.messages!, message],
+          ...chat!,
+          messages: [...chat!.messages!, message],
         };
       });
-      setChats((chats) => {
+      setChatList((chats) => {
         const index = chats.findIndex((chat) => chat.id === chatMeta.chatId);
         return [
           { ...chats[index], lastMessage: text },
@@ -150,13 +143,13 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
         text: message.text,
       });
       setCurrentChat((chat) => {
-        const index = chat.messages!.findIndex(
+        const index = chat!.messages!.findIndex(
           (m) => m.createdAt === createdAt
         );
         if (index !== -1) {
-          chat.messages![index] = data;
+          chat!.messages![index] = data;
         }
-        return { ...chat };
+        return { ...chat! };
       });
 
       socket?.emit("messageSent", {
@@ -164,17 +157,16 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
         data,
       });
     } catch (error) {
-      modal(error);
+      errorToast(error, "For some reason the message could not be sent.");
       setCurrentChat((chat) => {
-        const index = chat.messages!.findIndex(
+        const index = chat!.messages!.findIndex(
           (m) => m.createdAt === createdAt
         );
         if (index !== -1) {
-          chat.messages![index].failed = true;
+          chat!.messages![index].failed = true;
         }
-        return { ...chat };
+        return { ...chat! };
       });
-      toast.error("For some reason the message could not be sent.");
     }
   };
 
@@ -211,11 +203,13 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
             <div className="foot">
               <Form>
                 <div className="input">
-                  <TextArea
+                  <textarea
+                    className="field"
                     rows={3}
                     placeholder="Message"
                     onChange={handleChange}
                     value={text}
+                    ref={inputRef}
                   />
                 </div>
                 <div className="emoji">
@@ -235,6 +229,7 @@ const ChatArea = ({ chatMeta, onCloseChat: closeChat }: ChatAreaProps) => {
                     color="yellow"
                     size="small"
                     onClick={handleSend}
+                    disabled={!text.trim()}
                   >
                     Send
                   </Button>

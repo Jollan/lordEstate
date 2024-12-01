@@ -8,7 +8,7 @@ import { Icon } from "semantic-ui-react";
 import { SocketContext } from "../../../../context/Socket.context";
 import { readMessage } from "../../../../services/chat";
 import { ChatMeta } from "../../Profile";
-import { useSessionExpiredModal } from "../../../../lib/hooks";
+import { useErrorToast } from "../../../../lib/hooks";
 
 interface MessageProps {
   chatMeta: ChatMeta;
@@ -17,8 +17,10 @@ interface MessageProps {
 const Message = ({ chatMeta, message }: MessageProps) => {
   const { currentUser } = useContext(AuthContext);
   const { socket } = useContext(SocketContext);
+
+  const errorToast = useErrorToast();
+
   const mine = message.senderId === currentUser!.id;
-  const modal = useSessionExpiredModal();
 
   useEffect(() => {
     if (!mine && !message.read) {
@@ -30,8 +32,7 @@ const Message = ({ chatMeta, message }: MessageProps) => {
             data,
           });
         } catch (error) {
-          modal(error);
-          // toast.error("Something went wrong.");
+          errorToast(error);
         }
       })();
     }

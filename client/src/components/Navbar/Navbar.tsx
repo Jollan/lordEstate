@@ -16,11 +16,13 @@ import { NavbarContext } from "../../context/Navbar.context";
 import { AuthContext } from "../../context/Auth.context";
 import { logout } from "../../services/auth";
 import toast from "react-hot-toast";
-import { useNotificationStore } from "../../store/notification.store";
+import useNotificationStore from "../../store/notification.store";
 import { SocketContext } from "../../context/Socket.context";
 import { SemanticICONS } from "semantic-ui-react/dist/commonjs/generic";
 import { LoaderContext } from "../../context/Loader.context";
-import { useSessionExpiredModal } from "../../lib/hooks";
+import { useErrorToast } from "../../lib/hooks";
+import useChatStore from "../../store/chat.store";
+import { Message } from "../../models/chat.model";
 
 type MenuItem = { icon: SemanticICONS; label: string; to?: string };
 
@@ -37,27 +39,34 @@ const Navbar = ({ children }: NavbarProps) => {
   const { socket } = useContext(SocketContext);
   const { setLoading } = useContext(LoaderContext);
 
-  const fetch = useNotificationStore((state) => state.fetch);
-  const count = useNotificationStore((state) => state.count);
-  const modal = useSessionExpiredModal();
+  const { fetch, count } = useNotificationStore();
+  const currentChat = useChatStore((state) => state.currentChat);
+
+  const errorToast = useErrorToast();
 
   useEffect(() => {
-    if (currentUser && socket) {
+    if (currentUser) {
       fetch((error) => {
-        modal(error);
-        toast.error("Failed to fetch unread notifications count.");
+        errorToast(error, "Failed to fetch unread notifications count.");
       });
-      socket.on("messageReceived", () => {
-        fetch((error) => {
-          modal(error);
-          toast.error("Failed to fetch unread notifications count.");
-        });
-      });
+    }
+  }, [currentUser?.id]);
+
+  useEffect(() => {
+    if (socket && currentUser) {
+      const listener = (data: Message) => {
+        if (currentChat?.id !== data.chatId) {
+          fetch((error) => {
+            errorToast(error, "Failed to fetch unread notifications count.");
+          });
+        }
+      };
+      socket.on("messageReceived", listener);
       return () => {
-        socket.off("messageReceived");
+        socket.off("messageReceived", listener);
       };
     }
-  }, [currentUser, socket]);
+  }, [socket, currentUser?.id, currentChat?.id]);
 
   const menuItemList: MenuItem[] = [
     { icon: "home", label: "Home", to: "/" },
@@ -123,7 +132,7 @@ const Navbar = ({ children }: NavbarProps) => {
                 <>
                   <li style={{ display: "flex", alignItems: "center", gap: 5 }}>
                     <Avatar image={currentUser.avatar!} />
-                    <b>{title(currentUser.username)}</b>
+                    <b>{title(currentUser.username!)}</b>
                   </li>
                   <li>
                     <Button

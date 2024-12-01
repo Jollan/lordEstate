@@ -1,11 +1,11 @@
 import { useAsyncError } from "react-router-dom";
 import { Button } from "semantic-ui-react";
-import { useSessionExpiredModal } from "../../../lib/hooks";
+import { useErrorToast } from "../../../lib/hooks";
 
 export const AsynErrorPage = () => {
   const error: any = useAsyncError();
 
-  useSessionExpiredModal()(error)
+  useErrorToast()(error)
 
   const errorMessage =
     error?.response?.data?.message ||

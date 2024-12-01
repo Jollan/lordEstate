@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { getUnreadChatCount } from "../services/user";
 
-export interface NotificationStore {
+interface NotificationStore {
   count: number;
   fetch: (cb: (error: any) => void) => void;
   decrease: () => void;
@@ -9,7 +9,7 @@ export interface NotificationStore {
   reset: () => void;
 }
 
-export const useNotificationStore = create<NotificationStore>((set) => {
+const useNotificationStore = create<NotificationStore>((set) => {
   return {
     count: 0,
     async fetch(cb) {
@@ -31,3 +31,5 @@ export const useNotificationStore = create<NotificationStore>((set) => {
     },
   };
 });
+
+export default useNotificationStore;

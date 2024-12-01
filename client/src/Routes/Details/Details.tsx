@@ -65,7 +65,7 @@ const Details = () => {
 const _Details = () => {
   const { data: post } = useAsyncValue() as Axios.AxiosXHR<Post>;
   const { currentUser } = useContext(AuthContext);
-  const [saved, setSaved] = useState(isPostSaved(post, currentUser?.id));
+  const [saved, setSaved] = useState(isPostSaved(post, currentUser?.id!));
 
   const handleSavePost = useSavePost(() => setSaved((saved) => !saved));
 

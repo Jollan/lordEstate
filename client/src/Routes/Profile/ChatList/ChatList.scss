@@ -4,10 +4,11 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 10px;
   @include Chat;
 }
 
-.chat-list-placeholder {
+.empty-list-placeholder {
   width: fit-content;
   text-align: center;
   position: absolute;

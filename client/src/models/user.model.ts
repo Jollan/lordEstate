@@ -1,3 +1,4 @@
+import { Chat } from "./chat.model";
 import { Metadata } from "./models";
 import { Post } from "./post.model";
 
@@ -13,7 +14,12 @@ export interface UserInfo extends Common {
 
 export type Credentials = Pick<UserInfo, "username" | "password">;
 
-export interface User extends Common, Metadata {}
+export interface User extends Common, Metadata {
+  chatIds: string[];
+  chats?: Chat[];
+  posts?: Post[];
+  savedPosts?: any[]
+}
 
 export interface UserPosts {
   userPosts: Post[];

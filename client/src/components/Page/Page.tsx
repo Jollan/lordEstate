@@ -24,14 +24,17 @@ const Page: React.FC<PageProps> & {
   PageRight: React.FC<PageRight>;
   PageLeft: React.FC<PageLeft>;
 } = ({ children, className, responsivity }) => {
-  const { setResponsivity } = useContext(NavbarContext);
+  const { setResponsivity, setCollapse } = useContext(NavbarContext);
 
   useEffect(() => {
     setResponsivity(!!responsivity);
   }, [responsivity]);
 
   useEffect(() => {
-    return () => setResponsivity(false);
+    return () => {
+      setResponsivity(false);
+      setCollapse(false);
+    };
   }, []);
 
   return <div className={className}>{children}</div>;

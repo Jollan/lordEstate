@@ -32,7 +32,7 @@ import {
 } from "../../lib/const";
 import toast from "react-hot-toast";
 import ImageLoader from "../../components/ImageLoader/ImageLoader";
-import { useSessionExpiredModal } from "../../lib/hooks";
+import { useErrorToast } from "../../lib/hooks";
 
 const NewPost = () => {
   const [images, setImages] = useState<string[]>([]);
@@ -40,9 +40,10 @@ const NewPost = () => {
   const [city, setCity] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const modal = useSessionExpiredModal();
-
+  
   const navigate = useNavigate();
+  
+  const errorToast = useErrorToast();
 
   const checkRequiredFields = () => {
     if (!images.length) {
@@ -95,10 +96,9 @@ const NewPost = () => {
 
       const res = await createPost(postInfo);
       navigate(`/posts/${res.data.id}`);
-
       toast.success("Post created successfully!");
     } catch (error: any) {
-      modal(error);
+      errorToast(error);
       const message = error.response?.data.message ?? error.message;
       setError(message);
     } finally {

@@ -9,17 +9,18 @@ import { sanitize } from "../../lib/utils";
 import { UserInfo } from "../../models/user.model";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useSessionExpiredModal } from "../../lib/hooks";
+import { useErrorToast } from "../../lib/hooks";
 
 const ProfileUpdate = () => {
   const { currentUser, updateCurrentUser } = useContext(AuthContext);
 
-  const [avatar, setAvatar] = useState(currentUser?.avatar);
+  const [avatar, setAvatar] = useState(currentUser!.avatar);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const modal = useSessionExpiredModal();
 
   const navigate = useNavigate();
+
+  const errorToast = useErrorToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setLoading(true);
@@ -34,13 +35,13 @@ const ProfileUpdate = () => {
     }) as UserInfo;
 
     try {
-      const res = await updateUser(data, currentUser?.id!);
+      const res = await updateUser(data, currentUser!.id!);
       updateCurrentUser(res.data);
       navigate("/profile");
       toast.success("Profile updated successfully.");
     } catch (error: any) {
-      modal(error);
-      setError(error.response.data.message);
+      const message = error.response?.data.message ?? error.message;
+      errorToast(error, message);
     } finally {
       setLoading(false);
     }

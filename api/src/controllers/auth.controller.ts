@@ -18,7 +18,7 @@ const sendTokenResponse = (res: e.Response, code: number, user: User) => {
     }
   );
 
-  const { password, chatIds, createdAt, ...rest } = user;
+  const { password, ...rest } = user;
 
   res
     .cookie("token", token, {

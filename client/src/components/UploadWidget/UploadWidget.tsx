@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./UploadWidget.scss";
 import { Button, ButtonContent, Icon } from "semantic-ui-react";
 import { UploadResult, UploadWidgetConfig } from "../../models/models";
+import toast from "react-hot-toast";
 
 interface UploadWidgetProps {
   uwConfig: UploadWidgetConfig;
@@ -10,32 +11,37 @@ interface UploadWidgetProps {
 
 const UploadWidget = ({ ...props }: UploadWidgetProps) => {
   const [loaded, setLoaded] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const [initialized, setInitialized] = useState<boolean>();
 
   useEffect(() => {
     if (!loaded) {
       const uwScript = document.getElementById("uw");
       if (!uwScript) {
+        let counter = 20;
         (function loadScript() {
           const script = document.createElement("script");
           script.setAttribute("async", "");
           script.setAttribute("id", "uw");
           script.src = "https://upload-widget.cloudinary.com/global/all.js";
 
-          const callBack = () => setLoaded(true);
-          script.addEventListener("load", callBack, { once: true });
+          function loadListener() {
+            script.removeEventListener("error", errorListener);
+            setLoaded(true);
+          }
+          function errorListener() {
+            if (counter === 0) {
+              setInitialized(false);
+              toast.error("Failed to load cloudinary resources!");
+              return;
+            }
+            script.removeEventListener("load", loadListener);
+            script.remove();
+            counter -= 1;
+            setTimeout(() => loadScript(), 1000 * 10);
+          }
 
-          script.addEventListener(
-            "error",
-            () => {
-              script.removeEventListener("load", callBack);
-              script.remove();
-              setTimeout(() => {
-                loadScript();
-              }, 1000 * 10);
-            },
-            { once: true }
-          );
+          script.addEventListener("load", loadListener, { once: true });
+          script.addEventListener("error", errorListener, { once: true });
 
           document.body.appendChild(script);
         })();
@@ -43,6 +49,7 @@ const UploadWidget = ({ ...props }: UploadWidgetProps) => {
         setLoaded(true);
       }
     } else {
+      let counter = 10;
       (function initializeWidget() {
         try {
           const myWidget = (window as any).cloudinary.createUploadWidget(
@@ -51,7 +58,7 @@ const UploadWidget = ({ ...props }: UploadWidgetProps) => {
               if (!error && result && result.event === "success") {
                 props.consume(result);
               } else if (error) {
-                console.log(error);
+                toast.success("Something went wrong!");
               }
             }
           );
@@ -60,6 +67,12 @@ const UploadWidget = ({ ...props }: UploadWidgetProps) => {
           });
           setInitialized(true);
         } catch (error) {
+          if (counter === 0) {
+            setInitialized(false);
+            toast.error("Failed to initialize the upload widget!");
+            return;
+          }
+          counter -= 1;
           setTimeout(() => initializeWidget(), 1000 * 5);
         }
       })();
@@ -72,7 +85,7 @@ const UploadWidget = ({ ...props }: UploadWidgetProps) => {
       primary
       id="upload"
       animated="fade"
-      loading={!initialized}
+      loading={initialized === undefined}
       disabled={!initialized}
       size="big"
     >

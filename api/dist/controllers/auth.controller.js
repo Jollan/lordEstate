@@ -34,7 +34,7 @@ const sendTokenResponse = (res, code, user) => {
     const token = jsonwebtoken_1.default.sign({ id: user.id, admin: false }, process.env.JWT_SECRET_KEY, {
         expiresIn: age,
     });
-    const { password, chatIds, createdAt } = user, rest = __rest(user, ["password", "chatIds", "createdAt"]);
+    const { password } = user, rest = __rest(user, ["password"]);
     res
         .cookie("token", token, {
         httpOnly: true,

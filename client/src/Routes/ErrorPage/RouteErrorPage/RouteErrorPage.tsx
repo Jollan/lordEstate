@@ -1,11 +1,11 @@
 import { useRouteError } from "react-router-dom";
 import { Button, Icon, Container, Header, Segment } from "semantic-ui-react";
-import { useSessionExpiredModal } from "../../../lib/hooks";
+import { useErrorToast } from "../../../lib/hooks";
 
 const RouteErrorPage = () => {
   const error: any = useRouteError();
 
-  useSessionExpiredModal()(error);
+  useErrorToast()(error);
 
   const errorMessage =
     error?.response?.data?.message ||

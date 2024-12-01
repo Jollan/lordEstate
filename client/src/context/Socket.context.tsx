@@ -26,7 +26,7 @@ const SocketContextProvider = ({ children }: SocketContextProviderProps) => {
 
   useEffect(() => {
     currentUser && socket?.emit("joinRoom", currentUser.id);
-  }, [currentUser, socket]);
+  }, [currentUser?.id, socket]);
 
   return (
     <SocketContext.Provider value={{ socket }}>
